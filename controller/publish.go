@@ -128,7 +128,6 @@ func PublishWithoutOss(c *gin.Context) {
 
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
-
 	claims, _ := util.ParseToken(c.Query("token"))
 
 	user := models.User{Name: claims.Username, Password: claims.Password}
