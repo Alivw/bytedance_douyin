@@ -30,7 +30,7 @@ func (v Video) GetFeed() (*[]Video, error) {
 	//	panic(err)
 	//}
 
-	if err := db.Debug().Preload("User").Order("created_at desc").Find(&vs).Error; err != nil {
+	if err := db.Debug().Preload("User").Order("created_on desc").Find(&vs).Error; err != nil {
 		return nil, err
 	}
 	return &vs, nil

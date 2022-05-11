@@ -3,10 +3,9 @@ package models
 import (
 	"cn.jalivv.code/bytedance-douyin/pkg/setting"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
-
 	"time"
 )
 

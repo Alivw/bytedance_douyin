@@ -36,7 +36,7 @@ func Register(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	user := &models.User{Name: util.EncodeMD5(username), Password: util.EncodeMD5(password)}
+	user := &models.User{Name: username, Password: util.EncodeMD5(password)}
 	//	Determine whether the user exists.
 	if exist, _ := user_service.CheckUserExist(user); exist {
 		c.JSON(http.StatusOK, UserLoginResponse{
@@ -66,7 +66,7 @@ func Login(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	m := models.User{Name: util.EncodeMD5(username), Password: util.EncodeMD5(password)}
+	m := models.User{Name: username, Password: util.EncodeMD5(password)}
 	exist, err := user_service.CheckUserExist(&m)
 	if !exist || err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{

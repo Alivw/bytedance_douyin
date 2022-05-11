@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"cn.jalivv.code/bytedance-douyin/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -22,6 +23,34 @@ func FavoriteList(c *gin.Context) {
 		Response: Response{
 			StatusCode: 0,
 		},
-		VideoList: DemoVideos,
+
+		/**
+		var DemoVideos = []Video{
+			{
+				Id:            1,
+				Author:        DemoUser,
+				PlayUrl:       "https://www.w3schools.com/html/movie.mp4",
+				CoverUrl:      "https://cdn.pixabay.com/photo/2016/03/27/18/10/bear-1283347_1280.jpg",
+				FavoriteCount: 0,
+				CommentCount:  0,
+				IsFavorite:    false,
+			},
+		}
+		*/
+		VideoList: []models.Video{
+			{
+				Model:         models.Model{ID: 1},
+				PlayUrl:       "https://www.w3schools.com/html/movie.mp4",
+				CoverUrl:      "https://cdn.pixabay.com/photo/2016/03/27/18/10/bear-1283347_1280.jpg",
+				FavoriteCount: 0,
+				CommentCount:  0,
+				IsFavorite:    false,
+				UserID:        15,
+				User: models.User{
+					Model: models.Model{ID: 1},
+					Name:  "jalivv",
+				},
+			},
+		},
 	})
 }

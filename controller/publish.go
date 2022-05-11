@@ -15,7 +15,7 @@ import (
 
 type VideoListResponse struct {
 	Response
-	VideoList []Video `json:"video_list"`
+	VideoList []models.Video `json:"video_list"`
 }
 
 //Publish check token then save upload file to public directory
@@ -69,7 +69,7 @@ type VideoListResponse struct {
 
 //PublishWithoutOss The video uploaded by the user is saved to the local server.
 func PublishWithoutOss(c *gin.Context) {
-	token := c.Query("token")
+	token := c.PostForm("token")
 	claims, err := util.ParseToken(token)
 	//if _, exist := usersLoginInfo[token]; !exist {
 	//	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
@@ -108,7 +108,7 @@ func PublishWithoutOss(c *gin.Context) {
 		if !strings.HasSuffix(host, "/") {
 			host = fmt.Sprintf("%s%s", host, "/")
 		}
-		sc <- fmt.Sprintf("%s%s%s", host, "static/", saveFile)
+		sc <- fmt.Sprintf("%s%s%s", host, "static/", finalName)
 		group.Done()
 	}()
 
@@ -128,10 +128,25 @@ func PublishWithoutOss(c *gin.Context) {
 
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
+
+	claims, _ := util.ParseToken(c.Query("token"))
+
+	user := models.User{Name: claims.Username, Password: claims.Password}
+	user_service.CheckUserExist(&user)
+	videoList, err := user.GetPublishList()
+	if err != nil {
+		c.JSON(http.StatusOK, VideoListResponse{
+			Response: Response{
+				StatusCode: 1,
+			},
+		})
+		panic(err)
+	}
+
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		VideoList: DemoVideos,
+		VideoList: videoList,
 	})
 }

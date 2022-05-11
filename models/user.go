@@ -32,6 +32,13 @@ func (u *User) Save() error {
 	return nil
 }
 
+func (u *User) GetPublishList() ([]Video, error) {
+	var vs []Video
+	//db.Debug().Where("user_id=?", u.ID).Find(&vs)
+	db.Debug().Preload("User").Where("user_id=?", u.ID).Find(&vs)
+	return vs, nil
+}
+
 // CheckAuth checks if authentication information exists
 func CheckAuth(username, password string) (int32, error) {
 	var user User
