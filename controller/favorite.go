@@ -37,6 +37,7 @@ func FavoriteList(c *gin.Context) {
 			},
 		}
 		*/
+		// TODO 为了没有完成这个接口导致app闪退，先把返回结果写死
 		VideoList: []models.Video{
 			{
 				Model:         models.Model{ID: 1},
