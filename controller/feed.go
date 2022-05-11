@@ -2,7 +2,9 @@ package controller
 
 import (
 	"cn.jalivv.code/bytedance-douyin/models"
+	"cn.jalivv.code/bytedance-douyin/service/video_service"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"path"
 	"strconv"
 	"time"
@@ -21,17 +23,19 @@ func Feed(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	time.Unix(t, 0).Format("2006-01-02 15:04:05")
+	strTime := time.Unix(t, 0).Format("2006-01-02 15:04:05")
 
-	//if videos, err := service.NewVideoServiceInstance().Feed(strTime); err != nil {
-	//	panic(err)
-	//} else {
-	//	c.JSON(http.StatusOK, FeedResponse{
-	//		Response:  Response{StatusCode: 0},
-	//		VideoList: videos,
-	//		NextTime:  time.Now().Unix(),
-	//	})
-	//}
+	videos, err := video_service.Feed(strTime)
+	if err != nil {
+		c.JSON(http.StatusOK, FeedResponse{
+			Response: Response{StatusCode: 1}})
+		panic(err)
+	}
+	c.JSON(http.StatusOK, FeedResponse{
+		Response:  Response{StatusCode: 0},
+		VideoList: videos,
+		NextTime:  time.Now().Unix(),
+	})
 }
 func VidelFile(c *gin.Context) {
 	name := c.Param("name")

@@ -39,6 +39,12 @@ type Server struct {
 
 var ServerSetting = &Server{}
 
+type VideoUri struct {
+	Host string
+}
+
+var VideoUriSetting = &VideoUri{}
+
 type Database struct {
 	Type        string
 	User        string
@@ -74,6 +80,7 @@ func Setup() {
 	mapTo("server", ServerSetting)
 	mapTo("database", DatabaseSetting)
 	mapTo("redis", RedisSetting)
+	mapTo("videoUri", VideoUriSetting)
 
 	AppSetting.ImageMaxSize = AppSetting.ImageMaxSize * 1024 * 1024
 	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second

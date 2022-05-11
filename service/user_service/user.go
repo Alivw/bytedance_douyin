@@ -12,8 +12,7 @@ type User struct {
 }
 
 func CheckUserExist(u *models.User) (bool, error) {
-	user := &models.User{Name: u.Name, Password: u.Password}
-	return user.CheckUserExist()
+	return u.CheckUserExist()
 }
 
 func Save(u *models.User) error {

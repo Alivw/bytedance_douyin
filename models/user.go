@@ -20,7 +20,7 @@ func (u *User) CheckUserExist() (bool, error) {
 		return false, errors.New("databese error")
 	}
 	if u.ID > 0 {
-		return true, errors.New("User already exist")
+		return true, nil
 	}
 	return false, nil
 }

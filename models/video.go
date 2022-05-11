@@ -19,6 +19,29 @@ type Video struct {
 //}
 
 // TableName 会将 User 的表名重写为 `t_video`
-func (Video) TableName() string {
-	return "t_video"
+//func (Video) TableName() string {
+//	return "t_video"
+//}
+
+func (v Video) GetFeed() (*[]Video, error) {
+	var vs = []Video{}
+	// TODO 这里测试版本关闭 否则将导致获取不到比当前时间晚的视频
+	//if err := repositoty.DB.Debug().Preload("User").Where("created_at>?", lastTime).Order("created_at desc").Find(&vs).Error; err != nil {
+	//	panic(err)
+	//}
+
+	if err := db.Debug().Preload("User").Order("created_at desc").Find(&vs).Error; err != nil {
+		return nil, err
+	}
+	return &vs, nil
+}
+
+func (v *Video) SaveFile(c chan string) error {
+	url := <-c
+	v.PlayUrl = url
+	if err := db.Save(v).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
