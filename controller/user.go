@@ -29,14 +29,14 @@ type UserLoginResponse struct {
 
 type UserResponse struct {
 	Response
-	User User `json:"user"`
+	User models.User `json:"user"`
 }
 
 func Register(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	user := &models.User{Name: username, Password: util.EncodeMD5(password)}
+	user := &models.User{Name: util.EncodeMD5(username), Password: util.EncodeMD5(password)}
 	//	Determine whether the user exists.
 	if exist, _ := user_service.CheckUserExist(user); exist {
 		c.JSON(http.StatusOK, UserLoginResponse{
@@ -66,7 +66,7 @@ func Login(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	m := models.User{Name: username, Password: util.EncodeMD5(password)}
+	m := models.User{Name: util.EncodeMD5(username), Password: util.EncodeMD5(password)}
 	exist, err := user_service.CheckUserExist(&m)
 	if !exist || err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
@@ -83,16 +83,38 @@ func Login(c *gin.Context) {
 }
 
 func UserInfo(c *gin.Context) {
-	token := c.Query("token")
 
-	if user, exist := usersLoginInfo[token]; exist {
+	//if user, exist := usersLoginInfo[token]; exist {
+	//	c.JSON(http.StatusOK, UserResponse{
+	//		Response: Response{StatusCode: 0, StatusMsg: "success"},
+	//		User:     user,
+	//	})
+	//} else {
+	//	c.JSON(http.StatusOK, UserResponse{
+	//		Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+	//	})
+	//}
+
+	claims, _ := util.ParseToken(c.Query("token"))
+
+	user := models.User{Name: claims.Username, Password: claims.Password}
+	exist, err := user_service.CheckUserExist(&user)
+	if err != nil {
 		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 0, StatusMsg: "success"},
-			User:     user,
+			Response: Response{StatusCode: 1, StatusMsg: err.Error()},
 		})
-	} else {
-		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
-		})
+		panic(err)
 	}
+	if !exist {
+		c.JSON(http.StatusOK, UserResponse{
+			Response: Response{StatusCode: 1, StatusMsg: "用不不存在"},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, UserResponse{
+		Response: Response{StatusCode: 0, StatusMsg: "success"},
+		User:     user,
+	})
+
 }

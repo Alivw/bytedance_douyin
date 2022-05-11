@@ -2,6 +2,7 @@ package routers
 
 import (
 	"cn.jalivv.code/bytedance-douyin/controller"
+	"cn.jalivv.code/bytedance-douyin/middleware/jwt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,24 +17,28 @@ func InitRouter() *gin.Engine {
 
 	// basic apis
 	apiRouter.GET("/feed/", controller.Feed)
-	apiRouter.GET("/user/", controller.UserInfo)
 	apiRouter.POST("/user/register/", controller.Register)
 	apiRouter.POST("/user/login/", controller.Login)
-	apiRouter.POST("/publish/action/", controller.PublishWithoutOss)
-	apiRouter.GET("/publish/list/", controller.PublishList)
 
-	// extra apis - I
-	apiRouter.POST("/favorite/action/", controller.FavoriteAction)
-	apiRouter.GET("/favorite/list/", controller.FavoriteList)
-	apiRouter.POST("/comment/action/", controller.CommentAction)
-	apiRouter.GET("/comment/list/", controller.CommentList)
+	apiRouter.Use(jwt.JWT())
+	{
+		apiRouter.POST("/publish/action/", controller.PublishWithoutOss)
+		apiRouter.GET("/user/", controller.UserInfo)
+		apiRouter.GET("/publish/list/", controller.PublishList)
 
-	// extra apis - II
-	apiRouter.POST("/relation/action/", controller.RelationAction)
-	apiRouter.GET("/relation/follow/list/", controller.FollowList)
-	apiRouter.GET("/relation/follower/list/", controller.FollowerList)
+		// extra apis - I
+		apiRouter.POST("/favorite/action/", controller.FavoriteAction)
+		apiRouter.GET("/favorite/list/", controller.FavoriteList)
+		apiRouter.POST("/comment/action/", controller.CommentAction)
+		apiRouter.GET("/comment/list/", controller.CommentList)
 
-	apiRouter.GET("/public/:name", controller.VidelFile)
+		// extra apis - II
+		apiRouter.POST("/relation/action/", controller.RelationAction)
+		apiRouter.GET("/relation/follow/list/", controller.FollowList)
+		apiRouter.GET("/relation/follower/list/", controller.FollowerList)
+	}
+
+	//apiRouter.GET("/public/:name", controller.VidelFile)
 
 	return r
 }
