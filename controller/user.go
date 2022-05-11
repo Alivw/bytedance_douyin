@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"cn.jalivv.code/bytedance-douyin/models"
 	"cn.jalivv.code/bytedance-douyin/pkg/util"
 	"cn.jalivv.code/bytedance-douyin/service/user_service"
 	"github.com/gin-gonic/gin"
@@ -35,15 +36,15 @@ func Register(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	user := &user_service.User{Name: username, Password: util.EncodeMD5(password)}
+	user := &models.User{Name: username, Password: util.EncodeMD5(password)}
 	//	Determine whether the user exists.
-	if exist, _ := user.CheckUserExist(); exist {
+	if exist, _ := user_service.CheckUserExist(user); exist {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
 		})
 	} else {
 		// register
-		id, err := user.Save()
+		err := user_service.Save(user)
 		if err != nil {
 
 			panic(err)
@@ -55,7 +56,7 @@ func Register(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 0},
-			UserId:   int64(id),
+			UserId:   int64(user.ID),
 			Token:    token,
 		})
 	}

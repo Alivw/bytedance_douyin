@@ -25,11 +25,11 @@ func (u *User) CheckUserExist() (bool, error) {
 	return false, nil
 }
 
-func (u *User) Save() (int32, error) {
+func (u *User) Save() error {
 	if err := db.Save(u).Error; err != nil {
-		return 0, err
+		return err
 	}
-	return u.ID, nil
+	return nil
 }
 
 // CheckAuth checks if authentication information exists

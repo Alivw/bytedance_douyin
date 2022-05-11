@@ -11,12 +11,11 @@ type User struct {
 	Password      string
 }
 
-func (u *User) CheckUserExist() (bool, error) {
+func CheckUserExist(u *models.User) (bool, error) {
 	user := &models.User{Name: u.Name, Password: u.Password}
 	return user.CheckUserExist()
 }
 
-func (u *User) Save() (int32, error) {
-	m := &models.User{Name: u.Name, Password: u.Password}
-	return m.Save()
+func Save(u *models.User) error {
+	return u.Save()
 }
