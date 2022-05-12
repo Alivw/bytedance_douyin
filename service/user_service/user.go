@@ -24,12 +24,16 @@ func Save(u *models.User) error {
 }
 
 func FavoriteAction(ulv *models.UserLikeVideo) error {
+	var video = &models.Video{}
+	err := video.GetByID()
+	if err != nil {
+		return err
+	}
 	// 点赞操作
-	var err error
 	if ulv.ActionType == 1 {
-		err = gredis.SAdd(fmt.Sprintf("%s%v", "user_like_video:", ulv.UserID), ulv.VideoID)
+		err = gredis.Set(fmt.Sprintf("%s%v", "user_like_video:", ulv.UserID), video, 0)
 	} else {
-		err = gredis.SREM(fmt.Sprintf("%s%v", "user_like_video:", ulv.UserID), ulv.VideoID)
+		_, err = gredis.Delete(fmt.Sprintf("%s%v", "user_like_video:", ulv.UserID))
 	}
 
 	return err

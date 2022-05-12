@@ -43,19 +43,20 @@ func Set(key string, data interface{}, time int) error {
 	conn := RedisConn.Get()
 	defer conn.Close()
 
-	value, err := json.Marshal(data)
+	val, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
 
-	_, err = conn.Do("SET", key, value)
+	_, err = conn.Do("SET", key, val)
 	if err != nil {
 		return err
 	}
-
-	_, err = conn.Do("EXPIRE", key, time)
-	if err != nil {
-		return err
+	if time != 0 {
+		_, err = conn.Do("EXPIRE", key, time)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

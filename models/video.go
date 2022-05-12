@@ -1,5 +1,7 @@
 package models
 
+import "errors"
+
 type Video struct {
 	Model
 	PlayUrl       string `gorm:"type:varchar(255);not null" json:"play_url"`
@@ -43,5 +45,13 @@ func (v *Video) SaveFile(c chan string) error {
 		return err
 	}
 
+	return nil
+}
+
+func (v *Video) GetByID() error {
+	db.First(v)
+	if v.ID <= 0 {
+		return errors.New("The liked video does not exist.")
+	}
 	return nil
 }

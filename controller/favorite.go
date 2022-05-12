@@ -2,6 +2,7 @@ package controller
 
 import (
 	"cn.jalivv.code/bytedance-douyin/models"
+	"cn.jalivv.code/bytedance-douyin/pkg/util"
 	"cn.jalivv.code/bytedance-douyin/service/user_service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -19,10 +20,14 @@ func FavoriteAction(c *gin.Context) {
 	var f FavoriteReq
 	c.Bind(&f)
 	ulv := models.UserLikeVideo{
-		UserID:     f.UserID,
 		VideoID:    f.VideoID,
 		ActionType: f.ActionType,
 	}
+	claims, _ := util.ParseToken(f.Token)
+
+	var user = models.User{Name: claims.Username, Password: claims.Password}
+	user_service.CheckUserExist(&user)
+	ulv.UserID = int64(user.ID)
 	if err := user_service.FavoriteAction(&ulv); err != nil {
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: err.Error()})
 		panic(err)
@@ -34,6 +39,9 @@ func FavoriteAction(c *gin.Context) {
 
 // FavoriteList all users have same favorite video list
 func FavoriteList(c *gin.Context) {
+	//userId := c.Query("user_id")
+	//claims, _ := util.ParseToken(c.Query("token"))
+	//
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
 			StatusCode: 0,
