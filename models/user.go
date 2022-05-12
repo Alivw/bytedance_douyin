@@ -14,7 +14,8 @@ type User struct {
 	Password      string `gorm:"type:varchar(255);not null" json:"password"`
 }
 
-func (u *User) CheckUserExist() (bool, error) {
+// CheckUserExists 判断用户是否存在，并且返回时会携带用户id
+func (u *User) CheckUserExists() (bool, error) {
 	err := db.Select("id").Where(u).First(u).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, errors.New("databese error")

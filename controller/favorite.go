@@ -2,19 +2,34 @@ package controller
 
 import (
 	"cn.jalivv.code/bytedance-douyin/models"
+	"cn.jalivv.code/bytedance-douyin/service/user_service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
+type FavoriteReq struct {
+	UserID     int64  `form:"user_id"`
+	Token      string `form:"token"`
+	VideoID    int64  `form:"video_id"`
+	ActionType int32  `form:"action_type"`
+}
+
 // FavoriteAction no practical effect, just check if token is valid
 func FavoriteAction(c *gin.Context) {
-	token := c.Query("token")
-
-	if _, exist := usersLoginInfo[token]; exist {
-		c.JSON(http.StatusOK, Response{StatusCode: 0})
-	} else {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	var f FavoriteReq
+	c.Bind(&f)
+	ulv := models.UserLikeVideo{
+		UserID:     f.UserID,
+		VideoID:    f.VideoID,
+		ActionType: f.ActionType,
 	}
+	if err := user_service.FavoriteAction(&ulv); err != nil {
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: err.Error()})
+		panic(err)
+	} else {
+		c.JSON(http.StatusOK, Response{StatusCode: 0})
+	}
+
 }
 
 // FavoriteList all users have same favorite video list

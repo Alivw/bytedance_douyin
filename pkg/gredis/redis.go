@@ -114,3 +114,24 @@ func LikeDeletes(key string) error {
 
 	return nil
 }
+
+func SAdd(key string, val interface{}) error {
+	conn := RedisConn.Get()
+	defer conn.Close()
+	_, err := conn.Do("SADD", key, val)
+	return err
+}
+
+func SREM(key string, val interface{}) error {
+	conn := RedisConn.Get()
+	defer conn.Close()
+	_, err := conn.Do("SREM", key, val)
+	return err
+}
+
+func Option(opt string, key string, val interface{}) error {
+	conn := RedisConn.Get()
+	defer conn.Close()
+	_, err := conn.Do(opt, key, val)
+	return err
+}
