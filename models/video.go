@@ -1,6 +1,9 @@
 package models
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+)
 
 type Video struct {
 	Model
@@ -54,4 +57,12 @@ func (v *Video) GetByID() error {
 		return errors.New("The liked video does not exist.")
 	}
 	return nil
+}
+
+func (v Video) MarshalBinary() (data []byte, err error) {
+	return json.Marshal(v)
+}
+
+func (s Video) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, &s)
 }
